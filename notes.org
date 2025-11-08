@@ -1,0 +1,17 @@
+Questions:
+
+- Can the TimerExpiredBroadcast receiver be killed by android?
+  - I want the alarm to go on indefinitely, or at least for maybe 5-10m. Should probably be configurable.
+
+- How can I set a custom ringtone?
+
+- What is an intent?
+
+- How to stop the ringtone from within the app UI?
+  - Do I need to create a seperate activity for this?
+
+- How to display the alarm dismissal screen even when the phone is locked, without fully unlocking the phone?
+
+- How to: Make the alarm autodissmiss after 10s of ringing, but then again start rining after 1 minute and 30 seconds?
+
+- add vibration.

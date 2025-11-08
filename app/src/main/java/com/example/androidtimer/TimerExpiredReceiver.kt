@@ -4,15 +4,19 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 
+// Constants moved here for receiver access
+private const val PREFS_NAME = "TimerPrefs"
+private const val KEY_TRIGGER_TIME = "trigger_time"
+
 class TimerExpiredReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
-        // Stop the original TimerService, as its job is done.
-        val timerServiceIntent = Intent(context, TimerService::class.java)
-        context.stopService(timerServiceIntent)
+        // Clear the persisted trigger time
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit()
+            .remove(KEY_TRIGGER_TIME)
+            .apply()
 
-        // Start the background AlarmService. It will handle the notification, sound,
-        // vibration, and launching the full-screen UI.
+        // Start the background AlarmService for reliable sound and vibration.
         val alarmServiceIntent = Intent(context, AlarmService::class.java)
         context.startService(alarmServiceIntent)
     }

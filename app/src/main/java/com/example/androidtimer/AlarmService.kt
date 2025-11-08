@@ -14,6 +14,10 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import androidx.core.app.NotificationCompat
 
+// Keys moved here for shared access
+private const val PREFS_NAME = "TimerPrefs"
+private const val KEY_IS_RINGING = "is_ringing"
+
 class AlarmService : Service() {
 
     private lateinit var ringtone: Ringtone
@@ -32,7 +36,13 @@ class AlarmService : Service() {
         vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
     }
 
-    private fun sendAlarmStateUpdate(isRinging: Boolean) {
+    private fun updateAlarmState(isRinging: Boolean) {
+        // Persist the state
+        getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit()
+            .putBoolean(KEY_IS_RINGING, isRinging)
+            .apply()
+
+        // Send broadcast for live UI updates
         val intent = Intent(ALARM_STATE_UPDATE).apply {
             putExtra(IS_RINGING, isRinging)
             `package` = applicationContext.packageName
@@ -73,7 +83,7 @@ class AlarmService : Service() {
 
         startForeground(2, notification)
         ringtone.play()
-        sendAlarmStateUpdate(true)
+        updateAlarmState(true) // Update state to ringing
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val timings = longArrayOf(0, 500, 500, 500)
@@ -94,7 +104,7 @@ class AlarmService : Service() {
             ringtone.stop()
         }
         vibrator.cancel()
-        sendAlarmStateUpdate(false)
+        updateAlarmState(false) // Update state to not ringing
     }
 
     override fun onBind(intent: Intent?): IBinder? {
